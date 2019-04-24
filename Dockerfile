@@ -16,13 +16,13 @@
 
 FROM ubuntu:14.04
 
-ENV QT5_VERSION=qt53
-ENV QT5_PPA_VERSION=${QT5_VERSION}2
+ENV QT5_VERSION=qt510
+ENV QT5_PPA_VERSION=qt-5.10.1
 ENV TERM=xterm-256color
 
 RUN set -x \
-     && apt-get -y update \
-     && apt-get -y install --no-install-recommends software-properties-common
+    && apt-get update -y \
+    && apt-get -y install --no-install-recommends software-properties-common
 
 RUN set -x \
     && add-apt-repository ppa:beineri/opt-${QT5_PPA_VERSION}-trusty \
@@ -31,7 +31,7 @@ RUN set -x \
 RUN set -x \
     && apt-get update -y \
     && apt-get upgrade -y \
-    && apt-get -y --no-install-recommends install \
+    && apt-get install --no-install-recommends -y \
         build-essential \
         clang-3.6 \
         clang-format-3.6 \
