@@ -1,5 +1,5 @@
-# KeePassXC Linux Release Build Dockerfile
-# Copyright (C) 2017-2018 KeePassXC team <https://keepassxc.org/>
+# KeePassXC Linux CI Build Dockerfile
+# Copyright (C) 2017-2019 KeePassXC team <https://keepassxc.org/>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,15 +16,13 @@
 
 FROM ubuntu:14.04
 
-ENV REBUILD_COUNTER=10
-
-ENV QT5_VERSION=qt510
-ENV QT5_PPA_VERSION=qt-5.10.1
+ENV QT5_VERSION=qt53
+ENV QT5_PPA_VERSION=${QT5_VERSION}2
 ENV TERM=xterm-256color
 
 RUN set -x \
-    && apt-get update -y \
-    && apt-get -y install software-properties-common
+     && apt-get -y update \
+     && apt-get -y install --no-install-recommends software-properties-common
 
 RUN set -x \
     && add-apt-repository ppa:beineri/opt-${QT5_PPA_VERSION}-trusty \
@@ -32,36 +30,46 @@ RUN set -x \
 
 RUN set -x \
     && apt-get update -y \
-    && apt-get upgrade -y
-
-# build and runtime dependencies
-RUN set -x \
-    && apt-get install -y \
+    && apt-get upgrade -y \
+    && apt-get -y --no-install-recommends install \
+        build-essential \
+        clang-3.6 \
+        clang-format-3.6 \
         cmake3 \
         curl \
-        g++ \
         git \
-        libgcrypt20-18-dev \
+        gosu \
         libargon2-0-dev \
-        libsodium-dev \
+        libclang-common-3.6-dev \
         libcurl-no-gcrypt-dev \
-        ${QT5_VERSION}base \
-        ${QT5_VERSION}tools \
-        ${QT5_VERSION}x11extras \
-        ${QT5_VERSION}translations \
-        ${QT5_VERSION}imageformats \
-        ${QT5_VERSION}svg \
-        zlib1g-dev \
-        libxi-dev \
-        libxtst-dev \
+        libfuse2 \
+        libgcrypt20-18-dev \
+        libqrencode-dev \
         # ubuntu:14.04 has no quazip (it's optional)
         # libquazip5-dev \
-        mesa-common-dev \
+        libsodium-dev \
+        libxi-dev \
+        libxtst-dev \
         libyubikey-dev \
         libykpers-1-dev \
-        libqrencode-dev \
+        llvm-3.6 \
+        locales \
+        mesa-common-dev \
+        ${QT5_VERSION}base \
+        ${QT5_VERSION}imageformats \
+        ${QT5_VERSION}svg \
+        ${QT5_VERSION}tools \
+        ${QT5_VERSION}translations \
+        ${QT5_VERSION}x11extras \
         xclip \
-        xvfb
+        xvfb \
+        zlib1g-dev \
+    && apt-get autoremove --purge \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN set -x && locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
 
 ENV PATH="/opt/${QT5_VERSION}/bin:${PATH}"
 ENV CMAKE_PREFIX_PATH="/opt/${QT5_VERSION}/lib/cmake"
@@ -74,12 +82,6 @@ RUN set -x \
     && echo "/opt/${QT5_VERSION}/lib" > /etc/ld.so.conf.d/${QT5_VERSION}.conf \
     && echo "/opt/keepassxc-libs/lib/x86_64-linux-gnu" > /etc/ld.so.conf.d/keepassxc.conf
 
-# AppImage dependencies
-RUN set -x \
-    && apt-get install -y \
-        curl \
-        libfuse2
-
 RUN set -x \
     && curl -L "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" > /usr/bin/linuxdeploy \
     && curl -L "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage" > /usr/bin/linuxdeploy-plugin-qt \
@@ -89,9 +91,12 @@ RUN set -x \
     && chmod +x /usr/bin/appimagetool
 
 RUN set -x \
-    && apt-get autoremove --purge \
-    && rm -rf /var/lib/apt/lists/*
+    && groupadd -g 2000 keepassxc \
+    && useradd -u 2000 -g keepassxc -d /keepassxc -s /bin/bash keepassxc
 
-VOLUME /keepassxc/src
-VOLUME /keepassxc/out
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+
+VOLUME ["/keepassxc/src", "/keepassxc/out"]
 WORKDIR /keepassxc
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["bash"]
