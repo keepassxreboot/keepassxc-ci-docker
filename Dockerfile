@@ -18,7 +18,6 @@ FROM ubuntu:14.04
 
 ENV QT5_VERSION=qt510
 ENV QT5_PPA_VERSION=qt-5.10.1
-ENV TERM=xterm-256color
 
 RUN set -x \
     && apt-get update -y \
@@ -43,7 +42,6 @@ RUN set -x \
         libargon2-0-dev \
         libclang-common-3.6-dev \
         libcurl-no-gcrypt-dev \
-        libfuse2 \
         libgcrypt20-18-dev \
         libqrencode-dev \
         # ubuntu:14.04 has no quazip (it's optional)
