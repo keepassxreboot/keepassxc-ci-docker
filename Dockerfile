@@ -22,13 +22,9 @@ ENV QT5_PPA_VERSION=qt-5.10.1
 
 RUN set -x \
     && apt-get update -y \
-    && apt-get -y install --no-install-recommends software-properties-common
-
-RUN set -x \
+    && apt-get -y install --no-install-recommends software-properties-common \
     && add-apt-repository ppa:beineri/opt-${QT5_PPA_VERSION}-trusty \
-    && add-apt-repository ppa:phoerious/keepassxc
-
-RUN set -x \
+    && add-apt-repository ppa:phoerious/keepassxc \
     && apt-get update -y \
     && apt-get upgrade -y \
     && apt-get install --no-install-recommends -y \
@@ -65,7 +61,7 @@ RUN set -x \
         xvfb \
         zlib1g-dev \
     && apt-get autoremove --purge \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/{apt,dpkg,cache,log}/
 
 # ubuntu:14:04 has no gosu
 RUN set -x \
@@ -91,9 +87,9 @@ RUN set -x \
     && ldconfig
 
 RUN set -x \
-    && curl -L "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" > /usr/bin/linuxdeploy \
-    && curl -L "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage" > /usr/bin/linuxdeploy-plugin-qt \
-    && curl -L "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" > /usr/bin/appimagetool \
+    && curl -fL "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" > /usr/bin/linuxdeploy \
+    && curl -fL "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage" > /usr/bin/linuxdeploy-plugin-qt \
+    && curl -fL "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" > /usr/bin/appimagetool \
     && chmod +x /usr/bin/linuxdeploy \
     && chmod +x /usr/bin/linuxdeploy-plugin-qt \
     && chmod +x /usr/bin/appimagetool
