@@ -33,6 +33,7 @@ RUN set -x \
         clang-format-4.0 \
         cmake \
         curl \
+        file \
         fuse \
         git \
         libargon2-0-dev \
