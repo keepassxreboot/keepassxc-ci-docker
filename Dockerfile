@@ -37,6 +37,7 @@ RUN set -x \
         git \
         libargon2-0-dev \
         libclang-common-4.0-dev \
+        libgl1-mesa-dev \
         libgcrypt20-18-dev \
         libqrencode-dev \
         libquazip5-dev \
@@ -47,7 +48,6 @@ RUN set -x \
         libykpers-1-dev \
         llvm-4.0 \
         locales \
-        mesa-common-dev \
         ${QT5_VERSION}base \
         ${QT5_VERSION}imageformats \
         ${QT5_VERSION}svg \
