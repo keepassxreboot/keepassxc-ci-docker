@@ -14,41 +14,38 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 
 ENV REBUILD_COUNTER=1
-ENV QT5_VERSION=qt510
-ENV QT5_PPA_VERSION=qt-5.10.1
+ENV QT5_VERSION=qt512
+ENV QT5_PPA_VERSION=qt-5.12.3
 
 RUN set -x \
     && apt-get update -y \
     && apt-get -y install --no-install-recommends software-properties-common \
-    && add-apt-repository ppa:beineri/opt-${QT5_PPA_VERSION}-trusty \
+    && add-apt-repository ppa:beineri/opt-${QT5_PPA_VERSION}-xenial \
     && add-apt-repository ppa:phoerious/keepassxc \
     && apt-get update -y \
     && apt-get upgrade -y \
     && apt-get install --no-install-recommends -y \
         build-essential \
-        clang-3.6 \
-        clang-format-3.6 \
-        cmake3 \
+        clang-4.0 \
+        clang-format-4.0 \
+        cmake \
         curl \
         fuse \
         git \
-        # gosu \
         libargon2-0-dev \
-        libclang-common-3.6-dev \
-        libcurl-no-gcrypt-dev \
+        libclang-common-4.0-dev \
         libgcrypt20-18-dev \
         libqrencode-dev \
-        # ubuntu:14.04 has no quazip (it's optional)
-        # libquazip5-dev \
+        libquazip5-dev \
         libsodium-dev \
         libxi-dev \
         libxtst-dev \
         libyubikey-dev \
         libykpers-1-dev \
-        llvm-3.6 \
+        llvm-4.0 \
         locales \
         mesa-common-dev \
         ${QT5_VERSION}base \
@@ -61,9 +58,8 @@ RUN set -x \
         xvfb \
         zlib1g-dev \
     && apt-get autoremove --purge \
-    && rm -rf /var/lib/{apt,dpkg,cache,log}/
+    && rm -rf /var/lib/apt/lists/*
 
-# ubuntu:14:04 has no gosu
 RUN set -x \
     && git clone https://github.com/ncopa/su-exec.git \
     && (cd su-exec; make) \
