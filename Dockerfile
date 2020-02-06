@@ -58,6 +58,7 @@ RUN set -x \
         xclip \
         xvfb \
         zlib1g-dev \
+        openssh-client \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/{apt,dpkg,cache,log}/
     
