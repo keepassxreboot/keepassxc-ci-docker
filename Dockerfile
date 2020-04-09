@@ -22,7 +22,10 @@ ENV QT5_PPA_VERSION=qt-5.12.7
 
 RUN set -x \
     && apt-get update -y \
-    && apt-get -y install --no-install-recommends software-properties-common \
+    && apt-get -y install --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        software-properties-common \
     && add-apt-repository ppa:beineri/opt-${QT5_PPA_VERSION}-xenial \
     && add-apt-repository ppa:phoerious/keepassxc \
     && apt-get update -y \
