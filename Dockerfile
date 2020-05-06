@@ -52,6 +52,7 @@ RUN set -x \
         libykpers-1-dev \
         llvm-4.0 \
         locales \
+        metacity \
         ${QT5_VERSION}base \
         ${QT5_VERSION}imageformats \
         ${QT5_VERSION}svg \
