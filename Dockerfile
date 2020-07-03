@@ -16,7 +16,7 @@
 
 FROM ubuntu:16.04
 
-ENV REBUILD_COUNTER=1
+ENV REBUILD_COUNTER=2
 ENV QT5_VERSION=qt514
 ENV QT5_PPA_VERSION=qt-5.14.2
 
@@ -63,6 +63,7 @@ RUN set -x \
         xvfb \
         zlib1g-dev \
         openssh-client \
+        asciidoctor \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/{apt,dpkg,cache,log}/
     
