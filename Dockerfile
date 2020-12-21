@@ -17,8 +17,8 @@
 FROM ubuntu:16.04
 
 ENV REBUILD_COUNTER=2
-ENV QT5_VERSION=qt514
-ENV QT5_PPA_VERSION=qt-5.14.2
+ENV QT5_VERSION=qt515
+ENV QT5_PPA_VERSION=qt-5.15.2
 
 RUN set -x \
     && apt-get update -y \
