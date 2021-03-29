@@ -32,7 +32,6 @@ RUN set -x \
     && apt-get upgrade -y \
     && apt-get install --no-install-recommends -y \
         asciidoctor \
-        libbotan-kpxc-2-dev \
         build-essential \
         clang-4.0 \
         cmake \
@@ -42,6 +41,7 @@ RUN set -x \
         fuse \
         git \
         libargon2-0-dev \
+        libbotan-kpxc-2-dev \
         libclang-common-4.0-dev \
         libgl1-mesa-dev \
         libgcrypt20-18-dev \
