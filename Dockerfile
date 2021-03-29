@@ -45,6 +45,7 @@ RUN set -x \
         libclang-common-4.0-dev \
         libgl1-mesa-dev \
         libgcrypt20-18-dev \
+        libomp-dev \
         libqrencode-dev \
         libquazip5-dev \
         libsodium-dev \
