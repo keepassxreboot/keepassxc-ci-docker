@@ -53,6 +53,7 @@ RUN set -x \
         libxtst-dev \
         libyubikey-dev \
         libykpers-1-dev \
+        libusb-1.0-0-dev \
         llvm-4.0 \
         locales \
         metacity \
