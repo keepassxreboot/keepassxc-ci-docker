@@ -14,11 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
-ENV REBUILD_COUNTER=3
-ENV QT5_VERSION=qt515
-ENV QT5_PPA_VERSION=qt-5.15.2
+ENV REBUILD_COUNTER=0
 
 RUN set -x \
     && apt-get update -y \
@@ -26,14 +24,14 @@ RUN set -x \
         apt-transport-https \
         ca-certificates \
         software-properties-common \
-    && add-apt-repository ppa:beineri/opt-${QT5_PPA_VERSION}-xenial \
     && add-apt-repository ppa:phoerious/keepassxc \
     && apt-get update -y \
     && apt-get upgrade -y \
     && apt-get install --no-install-recommends -y \
         asciidoctor \
         build-essential \
-        clang-4.0 \
+        clang-10 \
+        clang-format-10 \
         cmake \
         curl \
         dbus \
@@ -44,7 +42,7 @@ RUN set -x \
         libbotan-kpxc-2-dev \
         libclang-common-4.0-dev \
         libgl1-mesa-dev \
-        libgcrypt20-18-dev \
+        libgcrypt-dev \
         libomp-dev \
         libqrencode-dev \
         libquazip5-dev \
@@ -55,15 +53,16 @@ RUN set -x \
         libykpers-1-dev \
         libusb-1.0-0-dev \
         libpcsclite-dev \
-        llvm-4.0 \
         locales \
         metacity \
-        ${QT5_VERSION}base \
-        ${QT5_VERSION}imageformats \
-        ${QT5_VERSION}svg \
-        ${QT5_VERSION}tools \
-        ${QT5_VERSION}translations \
-        ${QT5_VERSION}x11extras \
+        qtbase5-dev \
+        qtbase5-private-dev \
+        qttools5-dev \
+        qttools5-dev-tools \
+        qt5-image-formats-plugins \
+        qttranslations5-l10n \
+        libqt5svg5-dev \
+        libqt5x11extras5-dev \
         xclip \
         xvfb \
         zlib1g-dev \
@@ -72,17 +71,6 @@ RUN set -x \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/{apt,dpkg,cache,log}/
     
-# Install clang-format-10 to support proper code formatting checks    
-RUN set -x \
-    && curl https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
-    && apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-10 main" \
-    && apt-get update -y \
-    && apt-get install --no-install-recommends -y \
-        clang-format-10 \
-    && apt-get autoremove --purge \
-    && rm -rf /var/lib/{apt,dpkg,cache,log}/ \
-    && ln -s /usr/bin/clang-format-10 /usr/bin/clang-format
-
 RUN set -x \
     && git clone https://github.com/ncopa/su-exec.git \
     && (cd su-exec; make) \
@@ -93,16 +81,12 @@ RUN set -x && locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
-ENV PATH="/opt/${QT5_VERSION}/bin:${PATH}"
-ENV CMAKE_PREFIX_PATH="/opt/${QT5_VERSION}/lib/cmake"
 ENV CMAKE_INCLUDE_PATH="/opt/keepassxc-libs/include"
 ENV CMAKE_LIBRARY_PATH="/opt/keepassxc-libs/lib/x86_64-linux-gnu"
 ENV CPATH="${CMAKE_INCLUDE_PATH}"
-ENV LD_LIBRARY_PATH="${CMAKE_LIBRARY_PATH}:/opt/${QT5_VERSION}/lib"
 
 RUN set -x \
     && echo "/opt/keepassxc-libs/lib/x86_64-linux-gnu" > /etc/ld.so.conf.d/01-keepassxc.conf \
-    && echo "/opt/${QT5_VERSION}/lib" > /etc/ld.so.conf.d/02-${QT5_VERSION}.conf \
     && ldconfig
 
 RUN set -x \
@@ -111,7 +95,8 @@ RUN set -x \
     && curl -fL "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" > /usr/bin/appimagetool \
     && chmod +x /usr/bin/linuxdeploy \
     && chmod +x /usr/bin/linuxdeploy-plugin-qt \
-    && chmod +x /usr/bin/appimagetool
+    && chmod +x /usr/bin/appimagetool \
+    && ln -s /usr/bin/clang-format-10 /usr/bin/clang-format
 
 RUN set -x \
     && groupadd -g 1000 keepassxc \
