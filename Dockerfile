@@ -54,6 +54,7 @@ RUN set -x \
         libyubikey-dev \
         libykpers-1-dev \
         libusb-1.0-0-dev \
+        libpcsclite-dev \
         llvm-4.0 \
         locales \
         metacity \
