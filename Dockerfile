@@ -40,7 +40,6 @@ RUN set -x \
         git \
         libargon2-0-dev \
         libbotan-kpxc-2-dev \
-        libclang-common-4.0-dev \
         libgl1-mesa-dev \
         libgcrypt-dev \
         libomp-dev \
@@ -55,6 +54,7 @@ RUN set -x \
         libpcsclite-dev \
         locales \
         metacity \
+        qt5-default \
         qtbase5-dev \
         qtbase5-private-dev \
         qttools5-dev \
