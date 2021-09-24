@@ -63,6 +63,7 @@ RUN set -x \
         qttranslations5-l10n \
         libqt5svg5-dev \
         libqt5x11extras5-dev \
+        llvm-10 \
         xclip \
         xvfb \
         zlib1g-dev \
@@ -90,12 +91,14 @@ RUN set -x \
     && ldconfig
 
 RUN set -x \
-    && curl -fL "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" > /usr/bin/linuxdeploy \
-    && curl -fL "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage" > /usr/bin/linuxdeploy-plugin-qt \
-    && curl -fL "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" > /usr/bin/appimagetool \
-    && chmod +x /usr/bin/linuxdeploy \
-    && chmod +x /usr/bin/linuxdeploy-plugin-qt \
-    && chmod +x /usr/bin/appimagetool \
+    && curl -fL "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" > /usr/local/bin/linuxdeploy \
+    && curl -fL "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage" > /usr/local/bin/linuxdeploy-plugin-qt \
+    && curl -fL "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" > /usr/local/bin/appimagetool \
+    && curl -fL https://uploader.codecov.io/latest/linux/codecov > /usr/local/bin/codecov \
+    && chmod +x /usr/local/bin/linuxdeploy \
+    && chmod +x /usr/local/bin/linuxdeploy-plugin-qt \
+    && chmod +x /usr/local/bin/appimagetool \
+    && chmod +x /usr/local/bin/codecov \
     && ln -s /usr/bin/clang-format-10 /usr/bin/clang-format
 
 RUN set -x \
