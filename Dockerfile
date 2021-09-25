@@ -39,6 +39,7 @@ RUN set -x \
         dbus \
         file \
         fuse \
+        gcovr \
         git \
         libargon2-0-dev \
         libbotan-kpxc-2-dev \
