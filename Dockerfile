@@ -17,6 +17,8 @@
 FROM ubuntu:18.04
 
 ENV REBUILD_COUNTER=0
+ENV LLVM_VERSION=10
+ENV PATH="/usr/lib/llvm-${LLVM_VERSION}/bin:${PATH}"
 
 RUN set -x \
     && apt-get update -y \
@@ -30,8 +32,8 @@ RUN set -x \
     && apt-get install --no-install-recommends -y \
         asciidoctor \
         build-essential \
-        clang-10 \
-        clang-format-10 \
+        clang-${LLVM_VERSION} \
+        clang-format-${LLVM_VERSION} \
         cmake \
         curl \
         dbus \
@@ -63,7 +65,7 @@ RUN set -x \
         qttranslations5-l10n \
         libqt5svg5-dev \
         libqt5x11extras5-dev \
-        llvm-10 \
+        llvm-${LLVM_VERSION} \
         xclip \
         xvfb \
         zlib1g-dev \
