@@ -2,7 +2,7 @@ all: build
 
 .PHONY: build
 build:
-	docker build . -t keepassxc/keepassxc-ci:latest
+	docker build $(BUILD_ARGS) -t keepassxc/keepassxc-ci:latest .
 	docker tag keepassxc/keepassxc-ci:latest keepassxc/keepassxc-ci:bionic-qt5.9
 
 .PHONY: push
