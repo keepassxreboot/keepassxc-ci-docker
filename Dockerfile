@@ -56,6 +56,7 @@ RUN set -x \
         libusb-1.0-0-dev \
         libpcsclite-dev \
         libminizip-dev \
+        libkeyutils-dev \
         locales \
         metacity \
         qt5-default \
