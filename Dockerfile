@@ -82,6 +82,14 @@ RUN set -x \
     && mv su-exec/su-exec /usr/bin/su-exec \
     && rm -rf su-exec
 
+# Install Catch2 v3 (not available in Ubuntu 18.04)
+RUN set -x \
+    && git clone https://github.com/catchorg/Catch2.git \
+    && cd Catch2 \
+    && git checkout -b version3_5 v3.5.2 \
+    && cmake -Bbuild -H. -DBUILD_TESTING=OFF \
+    && sudo cmake --build build/ --target install
+
 RUN set -x && locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
