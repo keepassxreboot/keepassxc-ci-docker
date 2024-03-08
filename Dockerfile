@@ -38,6 +38,7 @@ RUN set -x \
         curl \
         dbus \
         file \
+        fluxbox \
         fuse \
         gcovr \
         git \
@@ -88,7 +89,7 @@ RUN set -x \
     && cd Catch2 \
     && git checkout -b version3_5 v3.5.2 \
     && cmake -Bbuild -H. -DBUILD_TESTING=OFF \
-    && sudo cmake --build build/ --target install
+    && cmake --build build/ --target install
 
 RUN set -x && locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
