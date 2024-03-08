@@ -2,10 +2,10 @@ all: build
 
 .PHONY: build
 build:
-	docker build $(BUILD_ARGS) -t keepassxc/keepassxc-ci:latest .
-	docker tag keepassxc/keepassxc-ci:latest keepassxc/keepassxc-ci:bionic-qt5.9
+	docker build $(BUILD_ARGS) -t ghcr.io/keepassxreboot/keepassxc-ci:latest .
+	docker tag ghcr.io/keepassxreboot/keepassxc-ci:latest ghcr.io/keepassxreboot/keepassxc-ci:bionic-qt5.9
 
 .PHONY: push
 push:
-	docker push keepassxc/keepassxc-ci:latest
-	docker push keepassxc/keepassxc-ci:bionic-qt5.9
+	docker push ghcr.io/keepassxreboot/keepassxc-ci:latest
+	docker push ghcr.io/keepassxreboot/keepassxc-ci:bionic-qt5.9
