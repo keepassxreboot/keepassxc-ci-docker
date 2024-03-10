@@ -37,6 +37,10 @@ RUN set -x \
         cmake \
         curl \
         dbus \
+        devscripts \
+        dh-autoreconf \
+        dh-make \
+        fakeroot \
         file \
         fluxbox \
         fuse \
@@ -48,7 +52,10 @@ RUN set -x \
         libgcrypt-dev \
         libomp-dev \
         libqrencode-dev \
+        libqt5svg5-dev \
+        libqt5x11extras5-dev \
         libquazip5-dev \
+        libreadline-dev \
         libsodium-dev \
         libxi-dev \
         libxtst-dev \
@@ -58,18 +65,17 @@ RUN set -x \
         libpcsclite-dev \
         libminizip-dev \
         libkeyutils-dev \
+        libzxcvbn-dev \
+        llvm-${LLVM_VERSION} \
         locales \
         metacity \
         qt5-default \
+        qt5-image-formats-plugins \
         qtbase5-dev \
         qtbase5-private-dev \
         qttools5-dev \
         qttools5-dev-tools \
-        qt5-image-formats-plugins \
         qttranslations5-l10n \
-        libqt5svg5-dev \
-        libqt5x11extras5-dev \
-        llvm-${LLVM_VERSION} \
         xclip \
         xvfb \
         zlib1g-dev \
