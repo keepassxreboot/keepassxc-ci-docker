@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 ENV REBUILD_COUNTER=0
 ENV LLVM_VERSION=10
@@ -46,8 +46,8 @@ RUN set -x \
         fuse \
         gcovr \
         git \
-        libargon2-0-dev \
-        libbotan-kpxc-2-dev \
+        libargon2-dev \
+        libbotan-2-dev \
         libgl1-mesa-dev \
         libgcrypt-dev \
         libomp-dev \
