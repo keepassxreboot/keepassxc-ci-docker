@@ -14,28 +14,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-FROM ubuntu:20.04
+FROM mcr.microsoft.com/devcontainers/cpp:ubuntu-20.04
 
 ENV REBUILD_COUNTER=0
-ENV LLVM_VERSION=10
-ENV PATH="/usr/lib/llvm-${LLVM_VERSION}/bin:${PATH}"
 
 RUN set -x \
     && apt-get update -y \
     && apt-get -y install --no-install-recommends \
-        apt-transport-https \
-        ca-certificates \
         software-properties-common \
     && add-apt-repository ppa:phoerious/keepassxc \
     && apt-get update -y \
     && apt-get upgrade -y \
     && apt-get install --no-install-recommends -y \
         asciidoctor \
-        build-essential \
-        clang-${LLVM_VERSION} \
-        clang-format-${LLVM_VERSION} \
-        cmake \
-        curl \
         dbus \
         devscripts \
         dh-autoreconf \
@@ -45,7 +36,6 @@ RUN set -x \
         fluxbox \
         fuse \
         gcovr \
-        git \
         libargon2-dev \
         libbotan-2-dev \
         libgl1-mesa-dev \
@@ -66,8 +56,6 @@ RUN set -x \
         libminizip-dev \
         libkeyutils-dev \
         libzxcvbn-dev \
-        llvm-${LLVM_VERSION} \
-        locales \
         metacity \
         qt5-default \
         qt5-image-formats-plugins \
@@ -83,19 +71,19 @@ RUN set -x \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/{apt,dpkg,cache,log}/
     
-RUN set -x \
-    && git clone https://github.com/ncopa/su-exec.git \
-    && (cd su-exec; make) \
-    && mv su-exec/su-exec /usr/bin/su-exec \
-    && rm -rf su-exec
+#RUN set -x \
+#    && git clone https://github.com/ncopa/su-exec.git \
+#    && (cd su-exec; make) \
+#    && mv su-exec/su-exec /usr/bin/su-exec \
+#    && rm -rf su-exec
 
 # Install Catch2 v3 (not available in Ubuntu 18.04)
-RUN set -x \
-    && git clone https://github.com/catchorg/Catch2.git \
-    && cd Catch2 \
-    && git checkout -b version3_5 v3.5.2 \
-    && cmake -Bbuild -H. -DBUILD_TESTING=OFF \
-    && cmake --build build/ --target install
+#RUN set -x \
+#    && git clone https://github.com/catchorg/Catch2.git \
+#    && cd Catch2 \
+#    && git checkout -b version3_5 v3.5.2 \
+#    && cmake -Bbuild -H. -DBUILD_TESTING=OFF \
+#    && cmake --build build/ --target install
 
 RUN set -x && locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -120,13 +108,13 @@ RUN set -x \
     && chmod +x /usr/local/bin/codecov \
     && ln -s /usr/bin/clang-format-10 /usr/bin/clang-format
 
-RUN set -x \
-    && groupadd -g 1000 keepassxc \
-    && useradd -u 1000 -g keepassxc -d /keepassxc -s /bin/bash keepassxc
+#RUN set -x \
+#    && groupadd -g 1000 keepassxc \
+#    && useradd -u 1000 -g keepassxc -d /keepassxc -s /bin/bash keepassxc
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
 VOLUME ["/keepassxc/src", "/keepassxc/out"]
 WORKDIR /keepassxc
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["bashx"]
+#ENTRYPOINT ["/docker-entrypoint.sh"]
+#CMD ["bashx"]
