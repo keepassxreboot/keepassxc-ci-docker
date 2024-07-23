@@ -16,14 +16,16 @@
 
 FROM ubuntu:20.04
 
-ENV REBUILD_COUNTER=0
-ENV LLVM_VERSION=10
+ARG LLVM_VERSION=12
+ARG DEBIAN_FRONTEND=noninteractive
+
 ENV PATH="/usr/lib/llvm-${LLVM_VERSION}/bin:${PATH}"
 
 RUN set -x \
     && apt-get update -y \
     && apt-get -y install --no-install-recommends \
         apt-transport-https \
+        gpg-agent \
         ca-certificates \
         software-properties-common \
     && add-apt-repository ppa:phoerious/keepassxc \
@@ -50,7 +52,7 @@ RUN set -x \
         libbotan-2-dev \
         libgl1-mesa-dev \
         libgcrypt-dev \
-        libomp-dev \
+        libomp-${LLVM_VERSION}-dev \
         libqrencode-dev \
         libqt5svg5-dev \
         libqt5x11extras5-dev \
@@ -66,12 +68,11 @@ RUN set -x \
         libminizip-dev \
         libkeyutils-dev \
         libzxcvbn-dev \
-        llvm-${LLVM_VERSION} \
+        llvm-${LLVM_VERSION}-dev \
         locales \
         metacity \
-        qt5-default \
-        qt5-image-formats-plugins \
         qtbase5-dev \
+        qt5-image-formats-plugins \
         qtbase5-private-dev \
         qttools5-dev \
         qttools5-dev-tools \
@@ -89,7 +90,7 @@ RUN set -x \
     && mv su-exec/su-exec /usr/bin/su-exec \
     && rm -rf su-exec
 
-# Install Catch2 v3 (not available in Ubuntu 18.04)
+# Install Catch2 v3
 RUN set -x \
     && git clone https://github.com/catchorg/Catch2.git \
     && cd Catch2 \
@@ -117,12 +118,16 @@ RUN set -x \
     && chmod +x /usr/local/bin/linuxdeploy \
     && chmod +x /usr/local/bin/linuxdeploy-plugin-qt \
     && chmod +x /usr/local/bin/appimagetool \
-    && chmod +x /usr/local/bin/codecov \
-    && ln -s /usr/bin/clang-format-10 /usr/bin/clang-format
+    && chmod +x /usr/local/bin/codecov
 
 RUN set -x \
     && groupadd -g 1000 keepassxc \
     && useradd -u 1000 -g keepassxc -d /keepassxc -s /bin/bash keepassxc
+
+# User 1000 already exists in newer base images
+#RUN set -x \
+#     && groupmod -n keepassxc ubuntu \
+#     && usermod -l keepassxc -g keepassxc -d /keepassxc -s /bin/bash ubuntu
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
