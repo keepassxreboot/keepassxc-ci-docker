@@ -135,3 +135,4 @@ VOLUME ["/keepassxc/src", "/keepassxc/out"]
 WORKDIR /keepassxc
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["bashx"]
+
