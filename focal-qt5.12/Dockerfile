@@ -67,6 +67,7 @@ RUN set -x \
         libpcsclite-dev \
         libminizip-dev \
         libkeyutils-dev \
+        libxkbcommon-dev \
         libzxcvbn-dev \
         llvm-${LLVM_VERSION}-dev \
         locales \
