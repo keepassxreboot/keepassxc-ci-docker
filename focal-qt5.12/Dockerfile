@@ -69,6 +69,7 @@ RUN set -x \
         libkeyutils-dev \
         libxkbcommon-dev \
         libzxcvbn-dev \
+        libpoppler-cpp-dev \
         llvm-${LLVM_VERSION}-dev \
         locales \
         metacity \
