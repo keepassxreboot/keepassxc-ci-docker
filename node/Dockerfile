@@ -17,7 +17,7 @@
 FROM node:lts
 
 RUN set -x \
-    && npx --yes playwright install --with-deps \
+    && npx --yes playwright install-deps \
     && rm -rf /var/lib/{apt,dpkg,cache,log}/
 
 RUN set -x \
