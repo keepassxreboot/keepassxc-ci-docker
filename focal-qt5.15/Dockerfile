@@ -79,6 +79,7 @@ RUN set -x \
         llvm-${LLVM_VERSION}-dev \
         locales \
         metacity \
+        ninja-build \
         qtbase5-dev \
         qt5-image-formats-plugins \
         qtbase5-private-dev \
