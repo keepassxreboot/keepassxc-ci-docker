@@ -21,8 +21,6 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 ARG QT5_MINOR=15
 ARG QT5_PATCH=4
-ARG QT5_VERSION=qt5${QT5_MINOR}
-ARG QT5_PPA_VERSION=qt-5.${QT5_MINOR}.${QT5_PATCH}
 
 ENV PATH="/usr/lib/llvm-${LLVM_VERSION}/bin:${PATH}"
 
@@ -33,7 +31,7 @@ RUN set -x \
         gpg-agent \
         ca-certificates \
         software-properties-common \
-    && add-apt-repository ppa:beineri/opt-${QT5_PPA_VERSION}-focal \
+    && add-apt-repository ppa:beineri/opt-qt-5.${QT5_MINOR}.${QT5_PATCH}-focal \
     && add-apt-repository ppa:phoerious/keepassxc \
     && apt-get update -y \
     && apt-get upgrade -y \
@@ -80,12 +78,13 @@ RUN set -x \
         locales \
         metacity \
         ninja-build \
-        qtbase5-dev \
-        qt5-image-formats-plugins \
-        qtbase5-private-dev \
-        qttools5-dev \
-        qttools5-dev-tools \
-        qttranslations5-l10n \
+        qt5${QT5_MINOR}base \
+        qt5${QT5_MINOR}imageformats \
+        qt5${QT5_MINOR}svg \
+        qt5${QT5_MINOR}tools \
+        qt5${QT5_MINOR}translations \
+        qt5${QT5_MINOR}x11extras \
+        qt5${QT5_MINOR}wayland \
         xclip \
         xvfb \
         zlib1g-dev \
@@ -111,15 +110,14 @@ RUN set -x && locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
-ENV CMAKE_INCLUDE_PATH="/opt/keepassxc-libs/include:/opt/qt5${QT5_MINOR}/include"
-ENV CMAKE_LIBRARY_PATH="/opt/keepassxc-libs/lib/x86_64-linux-gnu::/opt/qt5${QT5_MINOR}/lib"
+ENV CMAKE_INCLUDE_PATH="/opt/qt5${QT5_MINOR}/include"
+ENV CMAKE_LIBRARY_PATH="/opt/qt5${QT5_MINOR}/lib"
 ENV CPATH="${CMAKE_INCLUDE_PATH}"
 ENV PATH="/opt/qt5${QT5_MINOR}/bin:${PATH}"
 
 RUN set -x \
     && ln -s /opt/qt5${QT5_MINOR}/bin/qt5${QT5_MINOR}-env.sh /etc/profile.d/qt5${QT5_MINOR}-env.sh \
     && echo "/opt/qt5${QT5_MINOR}/lib" > /etc/ld.so.conf.d/01-qt5.conf \
-    && echo "/opt/keepassxc-libs/lib/x86_64-linux-gnu" > /etc/ld.so.conf.d/02-keepassxc.conf \
     && ldconfig
 
 RUN set -x \
@@ -131,6 +129,10 @@ RUN set -x \
     && chmod +x /usr/local/bin/linuxdeploy-plugin-qt \
     && chmod +x /usr/local/bin/appimagetool \
     && chmod +x /usr/local/bin/codecov
+
+# Config for linuxdeploy-plugin-qt
+ENV EXTRA_QT_PLUGINS="waylandcompositor;svg"
+ENV EXTRA_PLATFORM_PLUGINS="libqwayland-egl.so;libqwayland-generic.so"
 
 RUN set -x \
     && groupadd -g 1000 keepassxc \

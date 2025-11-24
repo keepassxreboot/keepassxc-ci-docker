@@ -82,6 +82,7 @@ RUN set -x \
         qttools5-dev \
         qttools5-dev-tools \
         qttranslations5-l10n \
+        qtwayland5 \
         xclip \
         xvfb \
         zlib1g-dev \
@@ -99,14 +100,6 @@ RUN set -x && locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
-ENV CMAKE_INCLUDE_PATH="/opt/keepassxc-libs/include"
-ENV CMAKE_LIBRARY_PATH="/opt/keepassxc-libs/lib/x86_64-linux-gnu"
-ENV CPATH="${CMAKE_INCLUDE_PATH}"
-
-RUN set -x \
-    && echo "/opt/keepassxc-libs/lib/x86_64-linux-gnu" > /etc/ld.so.conf.d/01-keepassxc.conf \
-    && ldconfig
-
 RUN set -x \
     && curl -fL "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" > /usr/local/bin/linuxdeploy \
     && curl -fL "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage" > /usr/local/bin/linuxdeploy-plugin-qt \
@@ -116,6 +109,10 @@ RUN set -x \
     && chmod +x /usr/local/bin/linuxdeploy-plugin-qt \
     && chmod +x /usr/local/bin/appimagetool \
     && chmod +x /usr/local/bin/codecov
+#
+# Config for linuxdeploy-plugin-qt
+ENV EXTRA_QT_PLUGINS="waylandcompositor;svg"
+ENV EXTRA_PLATFORM_PLUGINS="libqwayland-egl.so;libqwayland-generic.so"
 
 #RUN set -x \
 #    && groupadd -g 1000 keepassxc \
