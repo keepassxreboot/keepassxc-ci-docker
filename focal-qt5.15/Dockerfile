@@ -21,8 +21,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 ARG QT5_MINOR=15
 ARG QT5_PATCH=4
-ARG QT5_VERSION=qt5${QT5_MINOR}
-ARG QT5_PPA_VERSION=qt-5.${QT5_MINOR}.${QT5_PATCH}
+ARG QT5_PKG_VERSION=5${QT5_MINOR}
+ARG QT5_PPA_VERSION=5.${QT5_MINOR}.${QT5_PATCH}
 
 ENV PATH="/usr/lib/llvm-${LLVM_VERSION}/bin:${PATH}"
 
@@ -33,7 +33,7 @@ RUN set -x \
         gpg-agent \
         ca-certificates \
         software-properties-common \
-    && add-apt-repository ppa:beineri/opt-${QT5_PPA_VERSION}-focal \
+    && add-apt-repository ppa:beineri/opt-qt-${QT5_PPA_VERSION}-focal \
     && add-apt-repository ppa:phoerious/keepassxc \
     && apt-get update -y \
     && apt-get upgrade -y \
@@ -80,12 +80,12 @@ RUN set -x \
         locales \
         metacity \
         ninja-build \
-        qtbase5-dev \
-        qt5-image-formats-plugins \
-        qtbase5-private-dev \
-        qttools5-dev \
-        qttools5-dev-tools \
-        qttranslations5-l10n \
+        qt${QT5_PKG_VERSION}base \
+        qt${QT5_PKG_VERSION}imageformats \
+        qt${QT5_PKG_VERSION}svg \
+        qt${QT5_PKG_VERSION}tools \
+        qt${QT5_PKG_VERSION}translations \
+        qt${QT5_PKG_VERSION}x11extras \
         xclip \
         xvfb \
         zlib1g-dev \
