@@ -114,6 +114,7 @@ ENV CMAKE_INCLUDE_PATH="/opt/qt5${QT5_MINOR}/include"
 ENV CMAKE_LIBRARY_PATH="/opt/qt5${QT5_MINOR}/lib"
 ENV CPATH="${CMAKE_INCLUDE_PATH}"
 ENV PATH="/opt/qt5${QT5_MINOR}/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/opt/qt5${QT5_MINOR}/lib"
 
 RUN set -x \
     && ln -s /opt/qt5${QT5_MINOR}/bin/qt5${QT5_MINOR}-env.sh /etc/profile.d/qt5${QT5_MINOR}-env.sh \
@@ -131,7 +132,8 @@ RUN set -x \
     && chmod +x /usr/local/bin/codecov
 
 # Config for linuxdeploy-plugin-qt
-ENV EXTRA_QT_PLUGINS="waylandcompositor;svg"
+ENV QMAKE="/opt/qt5${QT5_MINOR}/bin/qmake"
+ENV EXTRA_QT_MODULES="svg"
 ENV EXTRA_PLATFORM_PLUGINS="libqwayland-egl.so;libqwayland-generic.so"
 
 RUN set -x \
