@@ -114,14 +114,14 @@ RUN set -x \
 ENV EXTRA_QT_PLUGINS="waylandcompositor;svg"
 ENV EXTRA_PLATFORM_PLUGINS="libqwayland-egl.so;libqwayland-generic.so"
 
-#RUN set -x \
-#    && groupadd -g 1000 keepassxc \
-#    && useradd -u 1000 -g keepassxc -d /keepassxc -s /bin/bash keepassxc
+RUN set -x \
+    && groupadd -g 1001 keepassxc \
+    && useradd -u 1001 -g keepassxc -d /keepassxc -s /bin/bash keepassxc
 
 # User 1000 already exists in newer base images
-RUN set -x \
-     && groupmod -n keepassxc ubuntu \
-     && usermod -l keepassxc -g keepassxc -d /keepassxc -s /bin/bash ubuntu
+#RUN set -x \
+#     && groupmod -n keepassxc ubuntu \
+#     && usermod -l keepassxc -g keepassxc -d /keepassxc -s /bin/bash ubuntu
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
