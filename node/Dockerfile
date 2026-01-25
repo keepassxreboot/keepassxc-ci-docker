@@ -27,8 +27,13 @@ RUN set -x \
     && rm -rf su-exec
 
 RUN set -x \
-    && usermod -l keepassxc -d /keepassxc -m node \
-    && groupmod -n keepassxc node
+    && groupadd -g 1001 keepassxc \
+    && useradd -u 1001 -g keepassxc -d /keepassxc -s /bin/bash keepassxc
+
+# User 1000 already exists
+#RUN set -x \
+#     && groupmod -n keepassxc node \
+#     && usermod -l keepassxc -g keepassxc -d /keepassxc -s /bin/bash node
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
