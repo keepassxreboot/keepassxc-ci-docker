@@ -116,12 +116,17 @@ ENV EXTRA_PLATFORM_PLUGINS="libqwayland-egl.so;libqwayland-generic.so"
 
 RUN set -x \
     && groupadd -g 1001 keepassxc \
-    && useradd -u 1001 -g keepassxc -d /keepassxc -s /bin/bash keepassxc
+    && useradd -u 1001 -g keepassxc -d /keepassxc -m -s /bin/bash keepassxc
 
 # User 1000 already exists in newer base images
 #RUN set -x \
 #     && groupmod -n keepassxc ubuntu \
 #     && usermod -l keepassxc -g keepassxc -d /keepassxc -s /bin/bash ubuntu
+
+# Ensure proper permissions of homedir and volume mounts
+RUN set -x \
+    && mkdir /keepassxc/src /keepassxc/out \
+    && chown -R keepassxc:keepassxc /keepassxc
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
