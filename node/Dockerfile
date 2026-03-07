@@ -26,15 +26,15 @@ RUN set -x \
     && mv su-exec/su-exec /usr/bin/su-exec \
     && rm -rf su-exec
 
-RUN set -x \
-    && groupadd -g 1001 keepassxc \
-    && useradd -u 1001 -g keepassxc -d /keepassxc -m -s /bin/bash keepassxc
+#RUN set -x \
+#    && groupadd -g 1000 keepassxc \
+#    && useradd -u 1000 -g keepassxc -d /keepassxc -m -s /bin/bash keepassxc
 
 # User 1000 already exists
-#RUN set -x \
-#     && groupmod -n keepassxc node \
-#     && usermod -l keepassxc -g keepassxc -d /keepassxc -s /bin/bash node
-#
+RUN set -x \
+     && groupmod -n keepassxc node \
+     && usermod -l keepassxc -g keepassxc -d /keepassxc -m -s /bin/bash node
+
 
 # Ensure proper permissions of homedir and volume mounts
 RUN set -x \
