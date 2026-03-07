@@ -57,6 +57,7 @@ RUN set -x \
         libomp-${LLVM_VERSION}-dev \
         libqrencode-dev \
         libqt5svg5-dev \
+        libqt5websockets5-dev \
         libqt5x11extras5-dev \
         libquazip5-dev \
         libreadline-dev \
