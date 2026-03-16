@@ -82,6 +82,11 @@ RUN set -x \
         qttools5-dev-tools \
         qttranslations5-l10n \
         qtwayland5 \
+        qt6-base-dev \
+        qt6-base-private-dev \
+        qt6-tools-dev \
+        qt6-base-dev-tools \
+        libqt6svg6-dev \
         xclip \
         xvfb \
         zlib1g-dev \
