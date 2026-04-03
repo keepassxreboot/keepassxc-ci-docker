@@ -86,6 +86,7 @@ RUN set -x \
         qt6-base-private-dev \
         qt6-tools-dev \
         qt6-base-dev-tools \
+        qt6-l10n-tools \
         libqt6svg6-dev \
         xclip \
         xvfb \
