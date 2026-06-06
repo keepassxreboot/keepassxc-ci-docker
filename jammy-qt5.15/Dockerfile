@@ -89,6 +89,7 @@ RUN set -x \
         qt6-tools-dev-tools \
         qt6-l10n-tools \
         libqt6svg6-dev \
+        libqt6websockets6-dev \
         xclip \
         xvfb \
         zlib1g-dev \
