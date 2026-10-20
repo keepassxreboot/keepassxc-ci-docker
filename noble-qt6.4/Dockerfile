@@ -14,9 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
-ARG LLVM_VERSION=15
+ARG LLVM_VERSION=18
 ARG DEBIAN_FRONTEND=noninteractive
 
 ENV PATH="/usr/lib/llvm-${LLVM_VERSION}/bin:${PATH}"
@@ -34,6 +34,7 @@ RUN set -x \
     && apt-get install --no-install-recommends -y \
         asciidoctor \
         build-essential \
+        catch2 \
         clang-${LLVM_VERSION} \
         clang-format-${LLVM_VERSION} \
         cmake \
@@ -50,14 +51,12 @@ RUN set -x \
         git \
         libargon2-dev \
         libbotan-2-dev \
+        libclang-rt-${LLVM_VERSION}-dev \
         libgl1-mesa-dev \
         libgcrypt-dev \
         libomp-${LLVM_VERSION}-dev \
         libqrencode-dev \
-        libqt5svg5-dev \
-        libqt5websockets5-dev \
-        libqt5x11extras5-dev \
-        libquazip5-dev \
+        libquazip1-qt6-dev \
         libreadline-dev \
         libsodium-dev \
         libxi-dev \
@@ -75,22 +74,16 @@ RUN set -x \
         locales \
         metacity \
         ninja-build \
-        qtbase5-dev \
-        qt5-image-formats-plugins \
-        qtbase5-private-dev \
-        qttools5-dev \
-        qttools5-dev-tools \
-        qttranslations5-l10n \
-        qtwayland5 \
         qt6-base-dev \
         qt6-base-private-dev \
         qt6-tools-dev \
-        qt6-base-dev-tools \
         qt6-tools-dev-tools \
-        qt6-l10n-tools \
+        qt6-base-dev-tools \
+        qt6-image-formats-plugins \
+        qt6-svg-dev \
+        qt6-translations-l10n \
+        qt6-websockets-dev \
         qt6-wayland \
-        libqt6svg6-dev \
-        libqt6websockets6-dev \
         xclip \
         xvfb \
         zlib1g-dev \
@@ -104,40 +97,39 @@ RUN set -x \
     && mv su-exec/su-exec /usr/bin/su-exec \
     && rm -rf su-exec
 
-# Install Catch2 v3
-RUN set -x \
-    && git clone https://github.com/catchorg/Catch2.git \
-    && cd Catch2 \
-    && git checkout -b version3_5 v3.5.2 \
-    && cmake -Bbuild -H. -DBUILD_TESTING=OFF \
-    && cmake --build build/ --target install
-
 RUN set -x && locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
+ARG TARGETARCH
+
 RUN set -x \
-    && curl -fL "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" > /usr/local/bin/linuxdeploy \
-    && curl -fL "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage" > /usr/local/bin/linuxdeploy-plugin-qt \
-    && curl -fL "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage" > /usr/local/bin/appimagetool \
-    && curl -fL https://uploader.codecov.io/latest/linux/codecov > /usr/local/bin/codecov \
+    && case "${TARGETARCH}" in \
+        amd64) appimage_arch=x86_64; codecov_platform=linux ;; \
+        arm64) appimage_arch=aarch64; codecov_platform=linux-arm64 ;; \
+        *) echo "Unsupported target architecture: ${TARGETARCH}" >&2; exit 1 ;; \
+    esac \
+    && curl -fL "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-${appimage_arch}.AppImage" > /usr/local/bin/linuxdeploy \
+    && curl -fL "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-${appimage_arch}.AppImage" > /usr/local/bin/linuxdeploy-plugin-qt \
+    && curl -fL "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${appimage_arch}.AppImage" > /usr/local/bin/appimagetool \
+    && curl -fL "https://uploader.codecov.io/latest/${codecov_platform}/codecov" > /usr/local/bin/codecov \
     && chmod +x /usr/local/bin/linuxdeploy \
     && chmod +x /usr/local/bin/linuxdeploy-plugin-qt \
     && chmod +x /usr/local/bin/appimagetool \
     && chmod +x /usr/local/bin/codecov
-
+#
 # Config for linuxdeploy-plugin-qt
 ENV EXTRA_QT_PLUGINS="waylandcompositor;svg"
 ENV EXTRA_PLATFORM_PLUGINS="libqwayland-egl.so;libqwayland-generic.so"
 
-RUN set -x \
-    && groupadd -g 1000 keepassxc \
-    && useradd -u 1000 -g keepassxc -d /keepassxc -m -s /bin/bash keepassxc
+#RUN set -x \
+#    && groupadd -g 1000 keepassxc \
+#    && useradd -u 1000 -g keepassxc -d /keepassxc -m -s /bin/bash keepassxc
 
 # User 1000 already exists in newer base images
-#RUN set -x \
-#     && groupmod -n keepassxc ubuntu \
-#     && usermod -l keepassxc -g keepassxc -d /keepassxc -m -s /bin/bash ubuntu
+RUN set -x \
+     && groupmod -n keepassxc ubuntu \
+     && usermod -l keepassxc -g keepassxc -d /keepassxc -m -s /bin/bash ubuntu
 
 # Ensure proper permissions of homedir and volume mounts
 RUN set -x \
@@ -150,4 +142,3 @@ VOLUME ["/keepassxc/src", "/keepassxc/out"]
 WORKDIR /keepassxc
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["bashx"]
-

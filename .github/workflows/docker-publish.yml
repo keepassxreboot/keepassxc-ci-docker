@@ -28,10 +28,7 @@ jobs:
           - ubuntu-latest
           - ubuntu-26.04-arm
         context:
-          - focal-qt5.12
-          - focal-qt5.15
-          - jammy-qt5.15
-          - noble-qt5.15
+          - noble-qt6.4
           - node
 
     runs-on: ${{ matrix.runner }}
