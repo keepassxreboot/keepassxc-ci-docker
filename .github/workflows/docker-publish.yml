@@ -81,24 +81,38 @@ jobs:
         with:
           context: ${{ matrix.context }}
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.context }}${{ runner.arch == 'ARM64' && '-arm64' || '' }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.context }}-${{ runner.arch == 'ARM64' && 'arm64' || 'amd64' }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.context }}-${{ github.sha }}-${{ runner.arch == 'ARM64' && 'arm64' || 'amd64' }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ matrix.context }}-${{ matrix.runner }}
           cache-to: type=gha,mode=max,scope=${{ matrix.context }}-${{ matrix.runner }}
 
-      # NOTE: Disable this for now as it creates a bunch of sha256 spam in the packages store
-      #
-      # Sign the resulting Docker image digest except on PRs.
-      # This will only write to the public Rekor transparency log when the Docker
-      # repository is public to avoid leaking data.  If you would like to publish
-      # transparency data even for private images, pass --force to cosign below.
-      # https://github.com/sigstore/cosign
-      #- name: Sign the published Docker image
-      #  if: ${{ github.event_name != 'pull_request' }}
-      #  env:
-      #    # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
-      #    TAGS: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.context }}
-      #    DIGEST: ${{ steps.build-and-push.outputs.digest }}
-      #  # This step uses the identity token to provision an ephemeral certificate
-      #  # against the sigstore community Fulcio instance.
-      #  run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+  merge-platforms:
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish multi-platform manifest
+        env:
+          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          REVISION: ${{ github.sha }}
+        run: |
+          for tag in noble-qt6.4 node; do
+            docker buildx imagetools create \
+              --tag "${IMAGE}:${tag}" \
+              "${IMAGE}:${tag}-${REVISION}-amd64" \
+              "${IMAGE}:${tag}-${REVISION}-arm64"
+          done
