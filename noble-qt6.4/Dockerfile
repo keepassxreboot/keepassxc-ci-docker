@@ -112,7 +112,7 @@ RUN set -x \
     && curl -fL "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-${appimage_arch}.AppImage" > /usr/local/bin/linuxdeploy \
     && curl -fL "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-${appimage_arch}.AppImage" > /usr/local/bin/linuxdeploy-plugin-qt \
     && curl -fL "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${appimage_arch}.AppImage" > /usr/local/bin/appimagetool \
-    && curl -fL "https://uploader.codecov.io/latest/${codecov_platform}/codecov" > /usr/local/bin/codecov \
+    && curl -fL "https://cli.codecov.io/latest/${codecov_platform}/codecov" > /usr/local/bin/codecov \
     && chmod +x /usr/local/bin/linuxdeploy \
     && chmod +x /usr/local/bin/linuxdeploy-plugin-qt \
     && chmod +x /usr/local/bin/appimagetool \
