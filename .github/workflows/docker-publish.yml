@@ -24,14 +24,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        runner:
+          - ubuntu-latest
+          - ubuntu-26.04-arm
         context:
           - focal-qt5.12
           - focal-qt5.15
           - jammy-qt5.15
           - noble-qt5.15
           - node
-        
-    runs-on: ubuntu-latest
+
+    runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
       packages: write
@@ -81,10 +84,10 @@ jobs:
         with:
           context: ${{ matrix.context }}
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.context }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.context }}${{ runner.arch == 'ARM64' && '-arm64' || '' }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.context }}-${{ matrix.runner }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.context }}-${{ matrix.runner }}
 
       # NOTE: Disable this for now as it creates a bunch of sha256 spam in the packages store
       #
