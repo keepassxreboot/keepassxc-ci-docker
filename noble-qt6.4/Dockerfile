@@ -46,7 +46,7 @@ RUN set -x \
         fakeroot \
         file \
         fluxbox \
-        fuse \
+        fuse3 \
         gcovr \
         git \
         libargon2-dev \
