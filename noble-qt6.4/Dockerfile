@@ -82,7 +82,7 @@ RUN set -x \
         xvfb \
         zlib1g-dev \
     && apt-get autoremove --purge \
-    && rm -rf /var/lib/{apt,dpkg,cache,log}/
+    && rm -rf /var/lib/apt/lists/*
     
 RUN set -x \
     && git clone https://github.com/ncopa/su-exec.git \
