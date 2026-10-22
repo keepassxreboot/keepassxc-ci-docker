@@ -16,7 +16,7 @@
 
 FROM ubuntu:24.04
 
-ARG LLVM_VERSION=18
+ARG LLVM_VERSION=20
 ARG DEBIAN_FRONTEND=noninteractive
 
 ENV PATH="/usr/lib/llvm-${LLVM_VERSION}/bin:${PATH}"
@@ -43,22 +43,17 @@ RUN set -x \
         devscripts \
         dh-autoreconf \
         dh-make \
-        fakeroot \
-        file \
         fluxbox \
         fuse3 \
         gcovr \
         git \
-        libargon2-dev \
         libbotan-2-dev \
         libclang-rt-${LLVM_VERSION}-dev \
         libgl1-mesa-dev \
         libgcrypt-dev \
         libomp-${LLVM_VERSION}-dev \
         libqrencode-dev \
-        libquazip1-qt6-dev \
         libreadline-dev \
-        libsodium-dev \
         libxi-dev \
         libxtst-dev \
         libyubikey-dev \
@@ -69,11 +64,10 @@ RUN set -x \
         libkeyutils-dev \
         libxkbcommon-dev \
         libzxcvbn-dev \
-        libpoppler-cpp-dev \
         llvm-${LLVM_VERSION}-dev \
         locales \
-        metacity \
         ninja-build \
+        openssh-client \
         qt6-base-dev \
         qt6-base-private-dev \
         qt6-tools-dev \
@@ -87,7 +81,6 @@ RUN set -x \
         xclip \
         xvfb \
         zlib1g-dev \
-        openssh-client \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/{apt,dpkg,cache,log}/
     
@@ -98,8 +91,8 @@ RUN set -x \
     && rm -rf su-exec
 
 RUN set -x && locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
 
 ARG TARGETARCH
 
