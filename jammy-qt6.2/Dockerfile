@@ -66,6 +66,8 @@ RUN set -x \
         libpcsclite-dev \
         libminizip-dev \
         libkeyutils-dev \
+        libqt6svg6-dev \
+        libqt6websockets6-dev \
         libxkbcommon-dev \
         libzxcvbn-dev \
         llvm-${LLVM_VERSION}-dev \
@@ -78,11 +80,10 @@ RUN set -x \
         qt6-tools-dev-tools \
         qt6-base-dev-tools \
         qt6-image-formats-plugins \
-        libqt6svg6-dev \
         qt6-translations-l10n \
         qt6-l10n-tools \
-        libqt6websockets6-dev \
         qt6-wayland \
+        shared-mime-info \
         xclip \
         xvfb \
         zlib1g-dev \
