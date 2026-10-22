@@ -28,6 +28,7 @@ jobs:
           - ubuntu-latest
           - ubuntu-26.04-arm
         context:
+          - jammy-qt6.2
           - noble-qt6.4
           - node
 
@@ -110,7 +111,7 @@ jobs:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           REVISION: ${{ github.sha }}
         run: |
-          for tag in noble-qt6.4 node; do
+          for tag in jammy-qt6.2 noble-qt6.4 node; do
             docker buildx imagetools create \
               --tag "${IMAGE}:${tag}" \
               "${IMAGE}:${tag}-${REVISION}-amd64" \

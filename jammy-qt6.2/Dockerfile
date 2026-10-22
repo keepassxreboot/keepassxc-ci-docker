@@ -1,0 +1,140 @@
+# KeePassXC Linux CI Build Dockerfile
+# Copyright (C) 2017-2022 KeePassXC team <https://keepassxc.org/>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 or (at your option)
+# version 3 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+FROM ubuntu:22.04
+
+ARG LLVM_VERSION=20
+ARG DEBIAN_FRONTEND=noninteractive
+
+ENV PATH="/usr/lib/llvm-${LLVM_VERSION}/bin:${PATH}"
+
+RUN set -x \
+    && apt-get update -y \
+    && apt-get -y install --no-install-recommends \
+        apt-transport-https \
+        gpg-agent \
+        ca-certificates \
+        curl \
+        software-properties-common \
+    && add-apt-repository ppa:phoerious/keepassxc \
+    && mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key -o /etc/apt/keyrings/llvm.asc \
+    && printf 'deb [signed-by=/etc/apt/keyrings/llvm.asc] https://apt.llvm.org/jammy/ llvm-toolchain-jammy-%s main\n' "${LLVM_VERSION}" > /etc/apt/sources.list.d/llvm.list \
+    && apt-get update -y \
+    && apt-get upgrade -y \
+    && apt-get install --no-install-recommends -y \
+        asciidoctor \
+        build-essential \
+        catch2 \
+        clang-${LLVM_VERSION} \
+        clang-format-${LLVM_VERSION} \
+        cmake \
+        curl \
+        dbus \
+        devscripts \
+        dh-autoreconf \
+        dh-make \
+        fluxbox \
+        fuse3 \
+        gcovr \
+        git \
+        libbotan-2-dev \
+        libclang-rt-${LLVM_VERSION}-dev \
+        libgl1-mesa-dev \
+        libgcrypt-dev \
+        libomp-${LLVM_VERSION}-dev \
+        libqrencode-dev \
+        libreadline-dev \
+        libxi-dev \
+        libxtst-dev \
+        libyubikey-dev \
+        libykpers-1-dev \
+        libusb-1.0-0-dev \
+        libpcsclite-dev \
+        libminizip-dev \
+        libkeyutils-dev \
+        libxkbcommon-dev \
+        libzxcvbn-dev \
+        llvm-${LLVM_VERSION}-dev \
+        locales \
+        ninja-build \
+        openssh-client \
+        qt6-base-dev \
+        qt6-base-private-dev \
+        qt6-tools-dev \
+        qt6-tools-dev-tools \
+        qt6-base-dev-tools \
+        qt6-image-formats-plugins \
+        libqt6svg6-dev \
+        qt6-translations-l10n \
+        qt6-l10n-tools \
+        libqt6websockets6-dev \
+        qt6-wayland \
+        xclip \
+        xvfb \
+        zlib1g-dev \
+    && apt-get autoremove --purge \
+    && rm -rf /var/lib/apt/lists/*
+    
+RUN set -x \
+    && git clone https://github.com/ncopa/su-exec.git \
+    && (cd su-exec; make) \
+    && mv su-exec/su-exec /usr/bin/su-exec \
+    && rm -rf su-exec
+
+RUN set -x && locale-gen en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+
+ARG TARGETARCH
+
+RUN set -x \
+    && case "${TARGETARCH}" in \
+        amd64) appimage_arch=x86_64; codecov_platform=linux ;; \
+        arm64) appimage_arch=aarch64; codecov_platform=linux-arm64 ;; \
+        *) echo "Unsupported target architecture: ${TARGETARCH}" >&2; exit 1 ;; \
+    esac \
+    && curl -fL "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-${appimage_arch}.AppImage" > /usr/local/bin/linuxdeploy \
+    && curl -fL "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-${appimage_arch}.AppImage" > /usr/local/bin/linuxdeploy-plugin-qt \
+    && curl -fL "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${appimage_arch}.AppImage" > /usr/local/bin/appimagetool \
+    && curl -fL "https://cli.codecov.io/latest/${codecov_platform}/codecov" > /usr/local/bin/codecov \
+    && chmod +x /usr/local/bin/linuxdeploy \
+    && chmod +x /usr/local/bin/linuxdeploy-plugin-qt \
+    && chmod +x /usr/local/bin/appimagetool \
+    && chmod +x /usr/local/bin/codecov
+#
+# Config for linuxdeploy-plugin-qt
+# Jammy installs qtchooser; select the Qt 6 tool instead of its qmake wrapper.
+ENV QMAKE=qmake6
+ENV EXTRA_QT_PLUGINS="waylandcompositor;svg"
+ENV EXTRA_PLATFORM_PLUGINS="libqwayland-egl.so;libqwayland-generic.so"
+
+# Jammy has no pre-existing ubuntu user to rename.
+RUN set -x \
+    && groupadd -g 1000 keepassxc \
+    && useradd -u 1000 -g keepassxc -d /keepassxc -m -s /bin/bash keepassxc
+
+# Ensure proper permissions of homedir and volume mounts
+RUN set -x \
+    && mkdir /keepassxc/src /keepassxc/out \
+    && chown -R keepassxc:keepassxc /keepassxc
+
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+
+VOLUME ["/keepassxc/src", "/keepassxc/out"]
+WORKDIR /keepassxc
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["bashx"]
