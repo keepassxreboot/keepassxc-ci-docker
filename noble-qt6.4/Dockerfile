@@ -85,6 +85,26 @@ RUN set -x \
     && apt-get autoremove --purge \
     && rm -rf /var/lib/apt/lists/*
 
+# Replace Noble's libbrotli-1.1.0 with 1.1.1 to patch CVE-2026-111497.
+RUN set -x \
+    && curl -fL https://github.com/google/brotli/archive/refs/tags/v1.1.1.tar.gz -o /tmp/brotli.tar.gz \
+    && echo "1a84dfaa740994d19254bf78aa7d74a4a8040d1638f3d5f2cdecb188fd520da8  /tmp/brotli.tar.gz" | sha256sum -c - \
+    && tar -xzf /tmp/brotli.tar.gz -C /tmp \
+    && brotli_libdir="/usr/lib/$(dpkg-architecture -qDEB_HOST_MULTIARCH)" \
+    && cmake -S /tmp/brotli-1.1.1 -B /tmp/brotli-build \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBUILD_SHARED_LIBS=ON \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_INSTALL_LIBDIR="${brotli_libdir}" \
+    && cmake --build /tmp/brotli-build --parallel "$(nproc)" \
+    && ctest --test-dir /tmp/brotli-build --output-on-failure \
+    && cmake --install /tmp/brotli-build \
+    && rm -f "${brotli_libdir}/libbrotlicommon.so.1.1.0" \
+        "${brotli_libdir}/libbrotlidec.so.1.1.0" \
+        "${brotli_libdir}/libbrotlienc.so.1.1.0" \
+    && ldconfig \
+    && rm -rf /tmp/brotli.tar.gz /tmp/brotli-1.1.1 /tmp/brotli-build
+
 RUN set -x \
     && git clone https://github.com/ncopa/su-exec.git \
     && (cd su-exec; make) \
