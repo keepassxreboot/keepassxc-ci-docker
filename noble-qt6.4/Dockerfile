@@ -17,7 +17,10 @@
 FROM ubuntu:24.04
 
 ARG LLVM_VERSION=20
+ARG SUEXEC_VERSION=0.3
+ARG SYFT_VERSION=1.57.1
 ARG DEBIAN_FRONTEND=noninteractive
+ARG TARGETARCH
 
 ENV PATH="/usr/lib/llvm-${LLVM_VERSION}/bin:${PATH}"
 
@@ -68,6 +71,7 @@ RUN set -x \
         locales \
         ninja-build \
         openssh-client \
+        python3-pip \
         qt6-base-dev \
         qt6-base-private-dev \
         qt6-tools-dev \
@@ -106,16 +110,21 @@ RUN set -x \
     && rm -rf /tmp/brotli.tar.gz /tmp/brotli-1.1.1 /tmp/brotli-build
 
 RUN set -x \
-    && git clone https://github.com/ncopa/su-exec.git \
-    && (cd su-exec; make) \
-    && mv su-exec/su-exec /usr/bin/su-exec \
-    && rm -rf su-exec
+    && case "$TARGETARCH" in \
+      amd64) TARGETARCH=x86_64 ;; \
+    esac \
+    && curl -fL https://github.com/ncopa/su-exec/releases/download/v${SUEXEC_VERSION}/su-exec-static-v${SUEXEC_VERSION}-${TARGETARCH} -o /usr/bin/su-exec \
+    && chmod +x /usr/bin/su-exec
+
+RUN set -x \
+    && curl -fL https://github.com/anchore/syft/releases/download/v${SYFT_VERSION}/syft_${SYFT_VERSION}_linux_${TARGETARCH}.deb -o syft.deb \
+    && dpkg -i syft.deb \
+    && rm syft.deb \
+    && python3 -m pip install --no-cache --break-system-packages spdx-tools
 
 RUN set -x && locale-gen en_US.UTF-8
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
-
-ARG TARGETARCH
 
 RUN set -x \
     && case "${TARGETARCH}" in \
@@ -131,7 +140,7 @@ RUN set -x \
     && chmod +x /usr/local/bin/linuxdeploy-plugin-qt \
     && chmod +x /usr/local/bin/appimagetool \
     && chmod +x /usr/local/bin/codecov
-#
+
 # Config for linuxdeploy-plugin-qt
 ENV EXTRA_QT_PLUGINS="waylandcompositor;svg"
 ENV EXTRA_PLATFORM_PLUGINS="libqwayland-egl.so;libqwayland-generic.so"
